@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace TestAssignmentLunaEdge.Controllers
+namespace PresentationTier.Controllers
 {
     [ApiController]
     [Route("[controller]")]

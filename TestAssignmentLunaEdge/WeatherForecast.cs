@@ -1,4 +1,4 @@
-namespace TestAssignmentLunaEdge
+namespace PresentationTier
 {
     public class WeatherForecast
     {
