@@ -81,5 +81,11 @@ namespace DataTier.Repositories
                 throw new Exception(ex.Message);
             }
         }
+
+        private bool CheckPassword()
+        {
+            return true;
+            //TODO:Implement specific letters for password
+        }
     }
 }

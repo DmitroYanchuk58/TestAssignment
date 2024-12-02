@@ -17,10 +17,10 @@ namespace DataTier.Entities
         public DateTime? DueDate { get; set; }
 
         [Required]
-        public Status Status { get; set; }
+        public Status Status { get; set; } = Status.Pending;
 
         [Required]  
-        public Priority Priority { get; set; }
+        public Priority Priority { get; set; } = Priority.Low;
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -56,12 +56,6 @@ namespace DataTier.Context
 
                 entity.Property(t => t.Title)
                 .IsRequired();
-
-                entity.Property(t => t.UpdatedAt)
-                .ValueGeneratedOnUpdate();
-
-                entity.Property(t => t.CreatedAt)
-                .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Task>()
