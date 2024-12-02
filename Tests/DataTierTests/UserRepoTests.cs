@@ -4,7 +4,7 @@ using DataTier.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
-namespace Tests
+namespace Tests.DataTierTests
 {
     public class UserRepoTests
     {
@@ -19,18 +19,24 @@ namespace Tests
         }
 
         [Test]
-        public void TestCreate()
+        public void TestCreateSuccess()
         {
             var user = new User()
             {
                 Id = Guid.NewGuid(),
-                Email = SharedClass.GetRandomString(6)+"@gmail.com",
+                Email = SharedClass.GetRandomString(6) + "@gmail.com",
                 Username = SharedClass.GetRandomString(15),
-                PasswordHash = SharedClass.GetRandomString(20),
+                PasswordHash = SharedClass.GetRandomString(20) + "#@$",
                 CreatedAt = DateTime.Now,
             };
 
-            var user2 = new User()
+            Assert.DoesNotThrow(() => _repository.Create(user));
+        }
+
+        [Test]
+        public void TestCreateUsernameEmpty()
+        {
+            var user = new User()
             {
                 Id = Guid.NewGuid(),
                 Email = SharedClass.GetRandomString(6) + "@gmail.com",
@@ -39,13 +45,21 @@ namespace Tests
                 CreatedAt = DateTime.Now,
             };
 
+            Assert.Throws<Exception>(() => _repository.Create(user));
+        }
+
+        [Test]
+        public void TestCreateNull()
+        {
             User userNull = null;
 
+            Assert.Throws<Exception>(() => _repository.Create(userNull));
+        }
+
+        public void TestCreateEmpty()
+        {
             User userNone = new User();
 
-            Assert.DoesNotThrow(() => _repository.Create(user));
-            Assert.Throws<Exception>(() => _repository.Create(user2));
-            Assert.Throws<Exception>(() => _repository.Create(userNull));
             Assert.Throws<Exception>(() => _repository.Create(userNone));
         }
 
@@ -59,15 +73,20 @@ namespace Tests
         }
 
         [Test]
-        public void TestRead()
+        public void TestReadSuccess()
         {
             var user = _repository.ReadAll().First();
 
             var readUser = _repository.Read(user.Id);
 
             Assert.DoesNotThrow(() => _repository.Read(user.Id));
-            Assert.Throws<Exception>(() => _repository.Read(Guid.NewGuid()));
             Assert.AreEqual(user, readUser);
+        }
+
+        [Test]
+        public void TestReadNotExistUser()
+        {
+            Assert.Throws<Exception>(() => _repository.Read(Guid.NewGuid()));
         }
 
         [Test]

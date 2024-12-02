@@ -1,7 +1,9 @@
 ﻿using DataTier.Context;
 using DataTier.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace DataTier.Repositories
 {
@@ -16,6 +18,10 @@ namespace DataTier.Repositories
         {
             try
             {
+                if (!IsPasswordHasSpecialCharacters(newEntity.PasswordHash))
+                {
+                    throw new Exception();
+                }
                 context.Users.Add(newEntity);
                 context.SaveChanges();
                 return newEntity;
@@ -82,10 +88,24 @@ namespace DataTier.Repositories
             }
         }
 
-        private bool CheckPassword()
+        private bool IsPasswordHasSpecialCharacters(string password)
         {
+            if (!Regex.IsMatch(password, @"[A-Z]"))
+            {
+                return false;
+            }
+
+            if (!Regex.IsMatch(password, @"[a-z]"))
+            {
+                return false;
+            }
+
+            if (!Regex.IsMatch(password, @"[0-9]"))
+            {
+                return false;
+            }
+
             return true;
-            //TODO:Implement specific letters for password
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Tests.DataTierTests
             var context = new DatabaseContext(options);
             _repository = new TaskRepository(context);
             var userRepository=new UserRepository(context);
-            _user = userRepository.ReadAll().First();
+            _user = userRepository.ReadAll().Last();
         }
 
         [Test]
@@ -128,6 +128,33 @@ namespace Tests.DataTierTests
         }
 
         [Test]
-        public void Test() { }
+        public void ReadSuccessTest() 
+        { 
+            var task = _repository.ReadAll().First();
+
+            var readTask = _repository.Read(task.Id);
+
+            Assert.IsNotNull(readTask);
+        }
+
+        [Test]
+        public void ReadNotExistTaskTest()
+        {
+            Assert.Throws<Exception>(() => _repository.Read(Guid.NewGuid()));
+        }
+
+        [Test]
+        public void DeleteTest()
+        {
+            var task=_repository.ReadAll().Last();
+
+            _repository.Delete(task.Id);
+        }
+
+        [Test]
+        public void DeleteNotExistTest()
+        {
+            Assert.Throws<Exception>(()=>_repository.Delete(Guid.NewGuid()));
+        }
     }
 }
