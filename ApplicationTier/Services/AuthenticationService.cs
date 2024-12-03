@@ -2,6 +2,7 @@
 using DataTier.Repositories;
 using ApplicationTier.Models;
 using db = DataTier.Entities;
+
 namespace ApplicationTier.Services
 {
     public class AuthenticationService : IAuthenticationService
@@ -62,7 +63,7 @@ namespace ApplicationTier.Services
 
         private User ConvertFromDbUserToUser(db.User user)
         {
-            var convertedUser = new User(user.Id,user.Username,user.Email,user.PasswordHash);
+            var convertedUser = new User(user.Id,user.Username,user.Email,user.PasswordHash,user.Tasks);
             return convertedUser;
         }
 

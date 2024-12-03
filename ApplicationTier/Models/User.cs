@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TaskDB = DataTier.Entities.Task;
 
 namespace ApplicationTier.Models
 {
@@ -15,12 +14,15 @@ namespace ApplicationTier.Models
 
         public string Password { get; set; }
 
-        public User(Guid id,string username,string email,string password)
+        public List<TaskDB> Tasks { get; set; }
+
+        public User(Guid id,string username,string email,string password,List<TaskDB> tasks)
         {
             this.Id = id;
             this.Username = username;
             this.Email = email;
             this.Password = password;
+            this.Tasks = tasks;
         }
     }
 }

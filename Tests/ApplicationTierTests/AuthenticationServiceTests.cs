@@ -28,23 +28,26 @@ namespace Tests.ApplicationTierTests
                 id: Guid.NewGuid(),
                 email: SharedClass.GetRandomString(6) + "@gmail.com",
                 username: SharedClass.GetRandomString(15),
-                password: SharedClass.GetRandomString(20)
+                password: SharedClass.GetRandomString(20),
+                tasks:null
             );
 
-            var userNull = new User(Guid.Empty, null, null, null);
+            var userNull = new User(Guid.Empty, null, null, null,null);
 
             var userNull2 = new User(
                 Guid.NewGuid(),
                 null,
                 SharedClass.GetRandomString(10) + "@email.com",
-                SharedClass.GetRandomString(15));
+                SharedClass.GetRandomString(15),
+                null);
 
             var existedUser = _repository.ReadAll().First();
 
             User existedUserForRegister = new User(existedUser.Id,
                 existedUser.Username,
                 existedUser.Email,
-                existedUser.PasswordHash);
+                existedUser.PasswordHash,
+                null);
 
             Assert.DoesNotThrow(() => _service.Register(user));
             Assert.Throws<ArgumentNullException>(() => _service.Register(userNull));
@@ -55,7 +58,7 @@ namespace Tests.ApplicationTierTests
         [Test]
         public void TestLogin()
         {
-            var existedUser = new User(Guid.NewGuid(), "Dima58", "dimochka158@gmail.com", "990Tyeq12-9");
+            var existedUser = new User(Guid.NewGuid(), "Dima58", "dimochka158@gmail.com", "990Tyeq12-9",null);
             Assert.DoesNotThrow(() => _service.Authenticate(existedUser.Username, existedUser.Password));
             Assert.IsTrue(_service.Authenticate(existedUser.Username, existedUser.Password));
             Assert.IsFalse(_service.Authenticate("aaaaa","bbbbb"));
