@@ -30,14 +30,7 @@ namespace ApplicationTier.Services
 
             var dbUser = ConvertFromUserToDbUser(user);
 
-            try
-            {
-                _repository.Create(dbUser);
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _repository.Create(dbUser);
         }
 
         private bool VerifyPassword(string password, string hashedPassword)
@@ -66,8 +59,6 @@ namespace ApplicationTier.Services
 
         private User FindUser(string username)
         {
-            try
-            {
                 var dbUsers = _repository.ReadAll();
                 var dbFoundUsers = dbUsers.Where(user => user.Username == username);
                 if (!dbFoundUsers.Any())
@@ -77,16 +68,9 @@ namespace ApplicationTier.Services
                 var dbUser = dbFoundUsers.First();
                 var user = ConvertFromDbUserToUser(dbUser);
                 return user;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
         private User FindUser(string username,string email)
         {
-            try
-            {
                 var dbUsers = _repository.ReadAll();
                 var dbFoundUsers = dbUsers.Where(user => user.Username == username && user.Email == email);
                 if (!dbFoundUsers.Any())
@@ -96,11 +80,6 @@ namespace ApplicationTier.Services
                 var dbUser = dbFoundUsers.First();
                 var user = ConvertFromDbUserToUser(dbUser);
                 return user;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
         private bool IsUserExist(string username,string email)

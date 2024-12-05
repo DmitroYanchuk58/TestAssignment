@@ -1,8 +1,5 @@
 ﻿using DataTier.Context;
 using DataTier.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace DataTier.Repositories
@@ -16,8 +13,6 @@ namespace DataTier.Repositories
         }
         public User Create(User newEntity)
         {
-            try
-            {
                 if (!IsPasswordHasSpecialCharacters(newEntity.PasswordHash))
                 {
                     throw new Exception();
@@ -25,70 +20,36 @@ namespace DataTier.Repositories
                 context.Users.Add(newEntity);
                 context.SaveChanges();
                 return newEntity;
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
         public void Delete(Guid id)
         {
-            try
-            {
                 var user = context.Users.Where(user => user.Id == id).First();
                 context.Users.Remove(user);
                 context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
         public User Read(Guid id)
         {
-            try
-            {
                 var user=context.Users.Where(user => user.Id == id).First();
                 return user;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
         public bool Update(User updatedUser)
         {
-            try
-            {
                 var user = context.Users.Where(user => user.Id == updatedUser.Id).First();
                 user=updatedUser;
                 context.SaveChanges();
                 return true;
-            }
-            catch(Exception ex)
-            {
-                return false;
-                throw new Exception(ex.Message);
-            }
         }
 
         public List<User> ReadAll()
         {
-            try
-            {
                 var users = context.Users.ToList();
                 return users;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
-        private bool IsPasswordHasSpecialCharacters(string password)
+        private static bool IsPasswordHasSpecialCharacters(string password)
         {
             if (!Regex.IsMatch(password, @"[A-Z]"))
             {

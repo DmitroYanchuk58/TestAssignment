@@ -3,8 +3,6 @@ using DataTier.Repositories;
 using TaskDB = DataTier.Entities.Task;
 using Task = ApplicationTier.Models.Task;
 using DataTier.Entities;
-using ApplicationTier.Models;
-using Microsoft.VisualBasic;
 
 namespace ApplicationTier.Services
 {
@@ -98,7 +96,7 @@ namespace ApplicationTier.Services
             _repository.Update(task);
         }
 
-        private TaskDB ConvertFromTaskToTaskDB(Task task, Guid userId)
+        private static TaskDB ConvertFromTaskToTaskDB(Task task, Guid userId)
         {
             return new TaskDB
             {
@@ -113,7 +111,7 @@ namespace ApplicationTier.Services
             };
         }
 
-        private Task ConvertFromTaskDBToTask(TaskDB taskDB)
+        private static Task ConvertFromTaskDBToTask(TaskDB taskDB)
         {
             return new Task
             {
