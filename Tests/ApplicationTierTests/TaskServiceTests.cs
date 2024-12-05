@@ -166,7 +166,7 @@ namespace Tests.ApplicationTierTests
         [Test]
         public void DeleteNotExistTask()
         {
-            Assert.Throws<ArgumentNullException>(() => _service.Get(Guid.NewGuid(), _user.Id));
+            Assert.Throws<ArgumentNullException>(() => _service.Delete(Guid.NewGuid(), _user.Id));
         }
 
         [Test]

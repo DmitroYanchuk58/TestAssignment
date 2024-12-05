@@ -3,6 +3,8 @@ using DataTier.Repositories;
 using TaskDB = DataTier.Entities.Task;
 using Task = ApplicationTier.Models.Task;
 using DataTier.Entities;
+using ApplicationTier.Models;
+using Microsoft.VisualBasic;
 
 namespace ApplicationTier.Services
 {
@@ -45,15 +47,27 @@ namespace ApplicationTier.Services
             return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
         }
 
-        public List<Task> GetAllByPriority(Priority priority, Guid userId)
+        public List<Task> GetAllByPriority(Priority? priority, Guid userId)
         {
             var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId && t.Priority == priority);
             return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
         }
 
-        public List<Task> GetTasksByDueDate(DateTime dueDate, SortOption sortOption, Guid userId)
+        public List<Task> GetAllByStatus(Status? status, Guid userId)
         {
-            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId && t.DueDate == dueDate.Date);
+            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId && t.Status == status);
+            return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
+        }
+
+        public List<Task> GetTasksByDueDate(DateTime? dueDate, Guid userId)
+        {
+            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId && t.DueDate == dueDate.Value.Date);
+
+            return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
+        }
+        public List<Task> GetAllSort(SortOption? sortOption, Guid userId)
+        {
+            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId);
 
             tasksDB = sortOption switch
             {
