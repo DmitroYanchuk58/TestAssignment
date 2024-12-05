@@ -16,12 +16,9 @@ namespace ApplicationTier.Services
         public bool Authenticate(string username, string password)
         {
             var user=FindUser(username);
-            if (user != null)
+            if (user != null&& VerifyPassword(password, user.Password))
             {
-                if(VerifyPassword(password, user.Password))
-                {
-                    return true;
-                }
+                 return true;
             }
             return false;
         }

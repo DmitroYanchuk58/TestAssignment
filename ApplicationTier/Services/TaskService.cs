@@ -1,96 +1,92 @@
 ﻿using ApplicationTier.Interfaces;
 using DataTier.Repositories;
 using TaskDB = DataTier.Entities.Task;
-using User = DataTier.Entities.User;
 using Task = ApplicationTier.Models.Task;
+using DataTier.Entities;
 
 namespace ApplicationTier.Services
 {
+    public enum SortOption
+    {
+        DueDateAsc,
+        DueDateDesc,
+        PriorityAsc,
+        PriorityDesc
+    }
+
     public class TaskService : ITaskService
     {
         private readonly TaskRepository _repository;
-        private readonly User _user;
 
-        public TaskService(TaskRepository repository,User user)
+        public TaskService(TaskRepository repository)
         {
-            this._repository = repository;
-            this._user= user;
+            _repository = repository;
         }
 
-        public void Create(Models.Task newTask)
+        public void Create(Models.Task newTask, Guid userId)
         {
-            try
-            {
-                var taskDB=ConvertFromTaskToTaskDB(newTask);
-                _repository.Create(taskDB);
-            }
-            catch(Exception ex) 
-            {
-                throw ex;
-            }
-        }
-        public Task Get(Guid id)
-        {
-            try
-            {
-                var taskDB = _user.Tasks.Where(task => task.Id == id).First();
-                if (taskDB.IdUser != _user.Id)
-                {
-                    throw new UnauthorizedAccessException("You don`t have permission to get this task.");
-                }
-                var task = ConvertFromTaskDBToTask(taskDB);
-                return task;
-            }
-            catch(Exception ex) 
-            {
-                throw ex;
-            }
+            var taskDB = ConvertFromTaskToTaskDB(newTask, userId);
+            _repository.Create(taskDB);
         }
 
-        public void Delete(Guid id)
+        public Task Get(Guid id, Guid userId)
         {
-            try
-            {
-                var task = this._repository.Read(id);
-                if (task.IdUser != _user.Id)
-                {
-                    throw new KeyNotFoundException("Task wasn`t found.");
-                }
-                else if (task == null)
-                {
-                    throw new UnauthorizedAccessException("You don`t have permission to delete this task.");
-                }
-                else
-                {
-                    this._repository.Delete(id);
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            var taskDB = _repository.Read(id);
+
+            if (taskDB == null || taskDB.IdUser != userId)
+                throw new UnauthorizedAccessException("You don’t have permission to access this task.");
+
+            return ConvertFromTaskDBToTask(taskDB);
         }
 
-        public void Update(Task task)
+        public List<Task> GetAll(Guid userId)
         {
-            try
-            {
-                var taskDB = _repository.Read(task.Id);
-                if(taskDB.IdUser != this._user.Id)
-                {
-                    throw new UnauthorizedAccessException("You don`t have permission to update this task.");
-                }
-                this._repository.Update(taskDB);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId);
+            return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
         }
 
-        private TaskDB ConvertFromTaskToTaskDB(Task task)
+        public List<Task> GetAllByPriority(Priority priority, Guid userId)
         {
-            TaskDB taskDB = new TaskDB()
+            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId && t.Priority == priority);
+            return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
+        }
+
+        public List<Task> GetTasksByDueDate(DateTime dueDate, SortOption sortOption, Guid userId)
+        {
+            var tasksDB = _repository.ReadAll().Where(t => t.IdUser == userId && t.DueDate == dueDate.Date);
+
+            tasksDB = sortOption switch
+            {
+                SortOption.DueDateAsc => tasksDB.OrderBy(t => t.DueDate),
+                SortOption.DueDateDesc => tasksDB.OrderByDescending(t => t.DueDate),
+                SortOption.PriorityAsc => tasksDB.OrderBy(t => t.Priority),
+                SortOption.PriorityDesc => tasksDB.OrderByDescending(t => t.Priority),
+                _ => tasksDB
+            };
+
+            return tasksDB.Select(ConvertFromTaskDBToTask).ToList();
+        }
+
+        public void Delete(Guid id, Guid userId)
+        {
+            var task = _repository.Read(id);
+            if (task == null || task.IdUser != userId)
+                throw new UnauthorizedAccessException("You don’t have permission to delete this task.");
+
+            _repository.Delete(id);
+        }
+
+        public void Update(TaskDB task, Guid userId)
+        {
+            if (task.IdUser != userId)
+                throw new UnauthorizedAccessException("You don’t have permission to update this task.");
+
+            _repository.Update(task);
+        }
+
+        private TaskDB ConvertFromTaskToTaskDB(Task task, Guid userId)
+        {
+            return new TaskDB
             {
                 Id = task.Id,
                 Description = task.Description,
@@ -99,15 +95,13 @@ namespace ApplicationTier.Services
                 DueDate = task.DueDate,
                 Priority = task.Priority,
                 Status = task.Status,
-                IdUser = _user.Id,
-                User = _user
+                IdUser = userId
             };
-            return taskDB;
         }
 
         private Task ConvertFromTaskDBToTask(TaskDB taskDB)
         {
-            Task task = new Task()
+            return new Task
             {
                 Id = taskDB.Id,
                 Description = taskDB.Description,
@@ -116,7 +110,6 @@ namespace ApplicationTier.Services
                 Priority = taskDB.Priority,
                 Status = taskDB.Status
             };
-            return task;
         }
     }
 }

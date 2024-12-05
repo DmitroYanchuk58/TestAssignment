@@ -5,17 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using DataTier.Entities;
 using Task = ApplicationTier.Models.Task;
+using TaskDB = DataTier.Entities.Task;
 
 namespace ApplicationTier.Interfaces
 {
     public interface ITaskService
     {
-        public void Create(Task newTask);
+        public void Create(Task newTask, Guid userId);
 
-        public Task Get(Guid id);
+        public Task Get(Guid id, Guid userId);
 
-        public void Delete(Guid id);
+        public void Delete(Guid id, Guid userId);
 
-        public void Update(Task task);
+        public void Update(TaskDB task, Guid userId);
     }
 }
