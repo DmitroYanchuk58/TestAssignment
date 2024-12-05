@@ -51,7 +51,7 @@ namespace ApplicationTier.Services
             return convertedUser;
         }
 
-        private User ConvertFromDbUserToUser(db.User user)
+        private static User ConvertFromDbUserToUser(db.User user)
         {
             var convertedUser = new User(user.Id,user.Username,user.Email,user.PasswordHash,user.Tasks);
             return convertedUser;

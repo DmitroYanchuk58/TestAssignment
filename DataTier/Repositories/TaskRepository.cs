@@ -37,7 +37,7 @@ namespace DataTier.Repositories
         {
                 if (string.IsNullOrEmpty(updatedTask.Title))
                 {
-                    throw new Exception();
+                throw new ArgumentNullException();
                 }
 
                 var task = context.Tasks.Where(task => task.Id == updatedTask.Id).First();

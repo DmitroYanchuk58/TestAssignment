@@ -148,7 +148,7 @@ namespace Tests.DataTierTests
         {
             var task=_repository.ReadAll().Last();
 
-            _repository.Delete(task.Id);
+            Assert.DoesNotThrow(()=>_repository.Delete(task.Id));
         }
 
         [Test]
